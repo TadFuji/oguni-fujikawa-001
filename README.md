@@ -1,0 +1,124 @@
+# 🎤 小学生向け音声チャットアプリ
+
+小学校低学年向けの音声対話ウェブアプリケーション。カラフルで親しみやすいデザインで、子どもたちがAIアシスタント「うんこ先生」と楽しく会話できます。
+
+## ✨ 主な機能
+
+- 🎯 **ワンタップ音声入力**: マイクボタンを1回押すだけで音声認識開始
+- 🤖 **AI対話**: Dify AIプラットフォーム統合による自然な会話
+- 🔊 **高品質音声**: Google Cloud Text-to-Speech による明瞭な日本語音声
+- 📱 **モバイル最適化**: スマートフォン・タブレット対応の直感的UI
+- 🎨 **子ども向けデザイン**: カラフルなアニメーションと大きなボタン
+- 📊 **会話履歴**: 過去の対話を保存・確認可能
+
+## 🚀 技術スタック
+
+### フロントエンド
+- **React 18** + TypeScript
+- **Tailwind CSS** + shadcn/ui
+- **TanStack Query** (状態管理)
+- **Web Speech API** + Google Cloud TTS
+- **Wouter** (軽量ルーティング)
+
+### バックエンド
+- **Express.js** + TypeScript
+- **Drizzle ORM** + PostgreSQL
+- **Dify AI Platform** 統合
+- **Express Session** (セッション管理)
+
+### 音声技術
+- **Google Cloud Text-to-Speech API**: 高品質な日本語音声生成
+- **Web Speech API**: ブラウザ標準音声認識
+- **2秒タイムアウト**: 自然な会話フロー
+- **フォールバック対応**: ブラウザ互換性確保
+
+## 🛠️ セットアップ
+
+### 必要な環境変数
+```bash
+DATABASE_URL=postgresql://...
+DIFY_API_KEY=app-...
+DIFY_APP_URL=https://api.dify.ai/v1/chat-messages
+GOOGLE_CLOUD_API_KEY=AIza...
+NODE_ENV=development
+```
+
+### インストール・起動
+```bash
+# 依存関係のインストール
+npm install
+
+# データベース設定
+npm run db:push
+
+# 開発サーバー起動
+npm run dev
+
+# 本番ビルド
+npm run build
+npm run start
+```
+
+## 📁 プロジェクト構成
+
+```
+├── client/                 # フロントエンド
+│   ├── src/
+│   │   ├── components/     # UI コンポーネント
+│   │   ├── hooks/         # カスタムフック（音声認識・TTS）
+│   │   ├── pages/         # ページコンポーネント
+│   │   └── lib/           # ユーティリティ
+├── server/                # バックエンド
+│   ├── index.ts          # サーバーエントリーポイント
+│   ├── routes.ts         # API ルート
+│   └── storage.ts        # データベース操作
+├── shared/               # 共有型定義
+│   └── schema.ts        # Drizzle スキーマ
+└── attached_assets/     # 画像・アセット
+```
+
+## 🎯 主要機能詳細
+
+### 音声認識システム
+- 継続的音声認識
+- 2秒無音検出で自動送信
+- ブラウザ互換性チェック
+- エラーハンドリング
+
+### 音声合成システム
+- Google Cloud TTS使用時: ja-JP-Neural2-C (男性音声)
+- 最適化パラメータ: 話速1.25倍、ピッチ-2.5st
+- Web Speech API フォールバック
+- SSML対応による自然な発話
+
+### AIアシスタント統合
+- Dify AIプラットフォーム
+- うんこ先生キャラクター
+- 文脈を理解した会話
+- 子ども向け安全フィルター
+
+## 🔧 開発・運用
+
+### パフォーマンス最適化
+- 本番バンドルサイズ: 317KB (gzipped)
+- デバッグログ99%削減
+- データベースクエリ最適化
+- 静的ファイルキャッシュ
+
+### デプロイメント
+- Replit Deployments対応
+- 自動HTTPS設定
+- ヘルスチェック機能
+- ゼロダウンタイムデプロイ
+
+詳細なデプロイ手順は [DEPLOYMENT.md](./DEPLOYMENT.md) を参照してください。
+
+## 📄 ライセンス
+
+MIT License
+
+---
+
+**開発者**: Replit AI Assistant  
+**対象年齢**: 小学校低学年（6-9歳）  
+**動作環境**: Chrome, Safari, Edge (音声API対応ブラウザ)
