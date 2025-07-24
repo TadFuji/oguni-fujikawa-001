@@ -26,10 +26,8 @@ export function useTextToSpeech() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'audio/mpeg',
         },
         body: JSON.stringify({ text }),
-        signal: AbortSignal.timeout(10000), // 10 second timeout
       });
 
       if (response.ok) {
