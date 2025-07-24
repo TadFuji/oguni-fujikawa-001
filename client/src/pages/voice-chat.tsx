@@ -119,9 +119,8 @@ export default function VoiceChat() {
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
-            おしゃべりロボット
+            うんこ先生と話そう!
           </h1>
-          <p className="text-white/90 text-lg">ロボットとおはなししよう！</p>
         </header>
 
         {/* Robot Character */}
@@ -129,7 +128,7 @@ export default function VoiceChat() {
 
         {/* Speech Bubble */}
         <SpeechBubble 
-          responseText={lastResponse || transcript || "ここにロボットの返事が表示されるよ！"}
+          responseText={lastResponse || transcript || "うんこ先生と一緒におしゃべりしよう！"}
           isUserMessage={isListening && !!transcript}
         />
 

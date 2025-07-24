@@ -10,7 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 24, 2025)
 
-### UI Cleanup (Latest)
+### Character & Branding Update (Latest)
+- **CHARACTER REDESIGN**: うんこ先生キャラクター導入
+- タイトル変更: "うんこ先生と話そう!" に更新
+- キャラクター画像: 専用うんこ先生イメージに置換
+- メッセージ更新: キャラクターに合わせたテキスト変更
+
+### UI Cleanup
 - **DEBUG WINDOW REMOVED**: デバッグパネル削除でクリーンなUI実現
 - ユーザー体験向上: 技術情報非表示で子供向けインターフェース最適化
 
