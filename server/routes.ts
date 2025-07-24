@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertConversationSchema, difyRequestSchema, difyResponseSchema } from "@shared/schema";
 import { z } from "zod";
+import OpenAI from "openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -16,7 +17,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Google Cloud Text-to-Speech API endpoint
+  // OpenAI Text-to-Speech API endpoint
   app.post("/api/tts", async (req, res) => {
     try {
       const { text } = req.body;
@@ -25,63 +26,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "テキストが必要です" });
       }
 
-      // Processing TTS request
+      // Processing TTS request with OpenAI
 
-      const googleApiKey = process.env.GOOGLE_CLOUD_API_KEY;
-      if (!googleApiKey) {
-        console.log('🔊 Google Cloud API Key未設定、Web Speech APIにフォールバック');
-        return res.status(404).json({ message: "Google Cloud TTS利用不可、Web Speech APIを使用" });
+      const openaiApiKey = process.env.OPENAI_API_KEY;
+      if (!openaiApiKey) {
+        console.log('🔊 OpenAI API Key未設定、Web Speech APIにフォールバック');
+        return res.status(404).json({ message: "OpenAI TTS利用不可、Web Speech APIを使用" });
       }
 
-      // Google Cloud TTS API call
-      const ttsResponse = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${googleApiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          input: { 
-            ssml: `<speak>
-              <prosody rate="1.3" pitch="-2.5st" volume="+3dB">
-                <emphasis level="strong">
-                  <break time="0.2s"/>
-                  ${text.replace(/\n/g, '<break time="0.3s"/>').replace(/[<>&"']/g, '').replace(/！/g, '！<break time="0.2s"/>').replace(/？/g, '？<break time="0.3s"/>')}
-                  <break time="0.1s"/>
-                </emphasis>
-              </prosody>
-            </speak>`
-          },
-          voice: {
-            languageCode: 'ja-JP',
-            name: 'ja-JP-Neural2-C', // High-quality Japanese male voice
-            ssmlGender: 'MALE'
-          },
-          audioConfig: {
-            audioEncoding: 'MP3',
-            speakingRate: 1.25, // Faster speaking rate for quicker delivery
-            pitch: -2.5, // Slightly higher pitch for brightness while keeping masculine tone
-            volumeGainDb: 4.0, // Louder and more energetic
-            effectsProfileId: ['small-bluetooth-speaker-class-device'] // Optimize for mobile speakers
-          }
-        })
+      // Initialize OpenAI client
+      const openai = new OpenAI({ apiKey: openaiApiKey });
+
+      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      // Generate speech using OpenAI TTS
+      const mp3 = await openai.audio.speech.create({
+        model: "tts-1-hd", // High-quality model for better audio quality
+        voice: "onyx", // Deep, warm male voice suitable for children
+        input: text,
+        speed: 1.25, // Faster speaking rate for quicker delivery (same as previous setup)
+        response_format: "mp3"
       });
 
-      if (!ttsResponse.ok) {
-        const errorText = await ttsResponse.text();
-        console.error('🔊 Google Cloud TTS API エラー:', ttsResponse.status, errorText);
-        throw new Error(`Google Cloud TTS API error: ${ttsResponse.status}`);
-      }
-
-      const ttsData = await ttsResponse.json();
-      
-      if (!ttsData.audioContent) {
-        throw new Error('No audio content received from Google Cloud TTS');
-      }
-
-      // TTS generated successfully
-
-      // Convert base64 audio to binary and send as MP3
-      const audioBuffer = Buffer.from(ttsData.audioContent, 'base64');
+      // Convert response to buffer
+      const audioBuffer = Buffer.from(await mp3.arrayBuffer());
       
       res.set({
         'Content-Type': 'audio/mpeg',
@@ -92,9 +59,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.send(audioBuffer);
 
     } catch (error) {
-      console.error('🔊 Google Cloud TTS エラー:', error);
+      console.error('🔊 OpenAI TTS エラー:', error);
       // Return 404 to trigger fallback to Web Speech API
-      res.status(404).json({ message: "Google Cloud TTS利用不可、Web Speech APIを使用" });
+      res.status(404).json({ message: "OpenAI TTS利用不可、Web Speech APIを使用" });
     }
   });
 
