@@ -49,9 +49,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate speech using OpenAI TTS - optimized for speed
       const mp3 = await openai.audio.speech.create({
         model: "tts-1", // Standard model for faster generation (vs tts-1-hd)
-        voice: "alloy", // Balanced, neutral voice suitable for children
+        voice: "onyx", // Deep, calm male voice with lower pitch
         input: optimizedText,
-        speed: 1.0, // Normal speaking rate for clearer delivery
+        speed: 0.9, // Slightly slower for lower perceived pitch
         response_format: "mp3"
       });
 
