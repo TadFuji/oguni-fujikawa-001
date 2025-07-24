@@ -1,4 +1,4 @@
-import unkoSenseiImage from "@assets/unko-sensei_1753345324034.png";
+import unkoSenseiImage from "@assets/unko-sensei-optimized.png";
 
 interface RobotCharacterProps {
   isThinking: boolean;
