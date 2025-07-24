@@ -11,6 +11,21 @@ const openai = new OpenAI({
   timeout: 10000 // 10 second timeout for faster failure detection
 });
 
+// Simple in-memory cache for TTS responses
+const ttsCache = new Map<string, Buffer>();
+const MAX_CACHE_SIZE = 100;
+
+// Helper function to manage cache
+function addToCache(key: string, buffer: Buffer) {
+  if (ttsCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = ttsCache.keys().next().value;
+    if (firstKey) {
+      ttsCache.delete(firstKey);
+    }
+  }
+  ttsCache.set(key, buffer);
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get conversation history
@@ -44,6 +59,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .replace(/\s+/g, ' ') // Normalize whitespace
         .trim()
         .substring(0, 4000); // Limit text length for faster processing
+      
+      // Check cache first for immediate response
+      const cacheKey = `alloy-1.0-${optimizedText}`;
+      const cachedAudio = ttsCache.get(cacheKey);
+      if (cachedAudio) {
+        res.set({
+          'Content-Type': 'audio/mpeg',
+          'Content-Length': cachedAudio.length,
+          'Cache-Control': 'public, max-age=3600', // Longer cache for cached responses
+          'X-Cache': 'HIT',
+        });
+        return res.send(cachedAudio);
+      }
 
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       // Generate speech using OpenAI TTS - optimized for speed
@@ -58,11 +86,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Stream response directly for faster delivery
       const audioBuffer = Buffer.from(await mp3.arrayBuffer());
       
+      // Add to cache for future requests
+      addToCache(cacheKey, audioBuffer);
+      
       res.set({
         'Content-Type': 'audio/mpeg',
         'Content-Length': audioBuffer.length,
         'Cache-Control': 'public, max-age=300', // Shorter cache for faster updates
         'Accept-Ranges': 'bytes', // Enable range requests for better streaming
+        'X-Cache': 'MISS',
       });
       
       res.send(audioBuffer);
@@ -108,15 +140,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Use correct API key for Dify
       const correctApiKey = "app-oHgFPuW6h2qOSx49HPjEfbMS";
 
-      // Call Dify API with correct API key
+      // Call Dify API with optimizations for speed
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      
       const difyResponse = await fetch(difyApiUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${correctApiKey}`,
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Connection': 'keep-alive', // Reuse connections
         },
         body: JSON.stringify(difyRequest),
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!difyResponse.ok) {
         throw new Error(`Dify API error: ${difyResponse.status} ${difyResponse.statusText}`);
@@ -126,12 +166,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let robotResponse = difyData.answer || "【重要】Difyから返答がありませんでした。設定を確認してください。";
       
-      // Clean up the response by removing unwanted prefixes
+      // Optimized text cleanup for faster processing
       robotResponse = robotResponse
-        .replace(/^Dify からの解答です\n=========\n/, '')
-        .replace(/^Dify からの解答です\n/, '')
+        .replace(/^Dify からの解答です\n(=========\n)?/, '')
         .replace(/^=========\n/, '')
-        .trim();
+        .trim()
+        .substring(0, 1000); // Limit response length for faster TTS
 
       // Calculate metrics for parent dashboard
       const messageLength = userMessage.length;

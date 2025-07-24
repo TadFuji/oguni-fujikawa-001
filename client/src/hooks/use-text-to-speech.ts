@@ -20,14 +20,16 @@ export function useTextToSpeech() {
     // Stop any ongoing speech
     window.speechSynthesis.cancel();
 
-    // Try Google Cloud TTS first, fallback to Web Speech API
+    // Try OpenAI TTS with optimized settings
     try {
       const response = await fetch('/api/tts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'audio/mpeg',
         },
         body: JSON.stringify({ text }),
+        signal: AbortSignal.timeout(10000), // 10 second timeout
       });
 
       if (response.ok) {
@@ -35,9 +37,10 @@ export function useTextToSpeech() {
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         
-        // Optimize audio playback for mobile
+        // Optimize audio playback for mobile and speed
         audio.preload = 'auto';
         audio.volume = 0.9; // Slightly lower volume for comfort
+        audio.playbackRate = 1.0; // Ensure consistent playback speed
         
         setIsSpeaking(true);
         setError(null);

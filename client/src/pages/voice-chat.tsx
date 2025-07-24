@@ -53,7 +53,9 @@ export default function VoiceChat() {
     onSuccess: (data) => {
       setLastResponse(data.robotResponse);
       resetTranscript();
+      // Start speaking immediately without waiting for cache invalidation
       speak(data.robotResponse);
+      // Invalidate cache in parallel for better performance
       queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
     },
     onError: (error) => {
