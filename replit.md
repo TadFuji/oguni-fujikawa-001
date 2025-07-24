@@ -10,6 +10,10 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 24, 2025)
 
+### UI Cleanup (Latest)
+- **DEBUG WINDOW REMOVED**: デバッグパネル削除でクリーンなUI実現
+- ユーザー体験向上: 技術情報非表示で子供向けインターフェース最適化
+
 ### OpenAI TTS Integration
 - **MAJOR TTS UPGRADE**: Google Cloud TTSからOpenAI TTS APIに移行
 - 音声品質向上: alloy voice (1.0倍速度) で自然な子供向け音声

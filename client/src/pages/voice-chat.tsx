@@ -133,22 +133,7 @@ export default function VoiceChat() {
           isUserMessage={isListening && !!transcript}
         />
 
-        {/* Debug: Show raw Dify response */}
-        {typedConversations.length > 0 && (
-          <div className="mt-4 p-4 bg-gray-800 text-white text-xs rounded-lg max-w-full overflow-auto">
-            <h3 className="font-bold mb-2">🔍 DEBUG: Dify接続状況分析</h3>
-            <div className="space-y-2">
-              <div><strong>ユーザー:</strong> {typedConversations[0]?.userMessage}</div>
-              <div className="bg-red-900 p-2 rounded">
-                <strong>Dify生返答:</strong> {typedConversations[0]?.rawDifyResponse || '❌ データが保存されていません（既存レコードまたはDify接続問題）'}
-              </div>
-              <div><strong>処理後返答:</strong> {typedConversations[0]?.robotResponse}</div>
-              <div className="text-yellow-300 text-xs mt-2">
-                💡 新しい音声入力でテストしてください。既存データにはrawDifyResponseがありません。
-              </div>
-            </div>
-          </div>
-        )}
+
 
         {/* Voice Input */}
         <VoiceInput 
