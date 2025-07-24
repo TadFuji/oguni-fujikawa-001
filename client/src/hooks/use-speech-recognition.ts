@@ -59,7 +59,7 @@ export function useSpeechRecognition(onTranscriptComplete?: (transcript: string)
   const isSupported = typeof window !== 'undefined' && 
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
-  // 2秒の無音を検出する関数
+  // 1.5秒の無音を検出する関数
   const startSilenceTimer = () => {
     if (silenceTimerRef.current) {
       clearTimeout(silenceTimerRef.current);
@@ -79,7 +79,7 @@ export function useSpeechRecognition(onTranscriptComplete?: (transcript: string)
           // Ignore stop errors
         }
       }
-    }, 2000);
+    }, 1500);
   };
 
   useEffect(() => {
