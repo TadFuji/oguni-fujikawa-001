@@ -1,13 +1,15 @@
-# 🎤 小学生向け音声チャットアプリ
+# 🎤 うんこ先生と話そう！
 
-小学校低学年向けの音声対話ウェブアプリケーション。カラフルで親しみやすいデザインで、子どもたちがAIアシスタント「うんこ先生」と楽しく会話できます。
+小学校低学年向けの音声対話ウェブアプリケーション。AIアシスタント「うんこ先生」と楽しく音声で会話できる教育アプリです。
+
+![うんこ先生](./attached_assets/unko-sensei-optimized.png)
 
 ## ✨ 主な機能
 
 - 🎯 **ワンタップ音声入力**: マイクボタンを1回押すだけで音声認識開始
 - 🤖 **AI対話**: Dify AIプラットフォーム統合による自然な会話
-- 🔊 **高品質音声**: Google Cloud Text-to-Speech による明瞭な日本語音声
-- 📱 **モバイル最適化**: スマートフォン・タブレット対応の直感的UI
+- 🔊 **高品質音声**: OpenAI TTS による明瞭な日本語音声
+- 📱 **モバイル最適化**: iPhone Safari対応済み・スマートフォン完全対応
 - 🎨 **子ども向けデザイン**: カラフルなアニメーションと大きなボタン
 - 📊 **会話履歴**: 過去の対話を保存・確認可能
 
@@ -17,13 +19,14 @@
 - **React 18** + TypeScript
 - **Tailwind CSS** + shadcn/ui
 - **TanStack Query** (状態管理)
-- **Web Speech API** + Google Cloud TTS
+- **Web Speech API** + OpenAI TTS
 - **Wouter** (軽量ルーティング)
 
 ### バックエンド
 - **Express.js** + TypeScript
 - **Drizzle ORM** + PostgreSQL
-- **Dify AI Platform** 統合
+- **OpenAI TTS API** 音声合成
+- **Dify AI Platform** 対話AI統合
 - **Express Session** (セッション管理)
 
 ### 音声技術
