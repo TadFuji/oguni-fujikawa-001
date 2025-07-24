@@ -35,12 +35,12 @@ export default function VoiceInput({
   };
 
   return (
-    <div className="text-center mb-8">
+    <div className="text-center mb-6">
       {/* Large Microphone Button */}
       <Button
         onClick={onVoiceInput}
         disabled={isProcessing && !isListening}
-        className={`w-24 h-24 rounded-full text-white text-4xl flex items-center justify-center mx-auto mb-4 transition-all duration-300 hover:scale-105 active:scale-95 ${
+        className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full text-white text-3xl sm:text-4xl flex items-center justify-center mx-auto mb-4 transition-all duration-300 hover:scale-105 active:scale-95 ${
           isListening 
             ? 'bg-red-500 animate-pulse shadow-lg shadow-red-500/50' 
             : 'bg-blue-500 hover:bg-blue-600'
@@ -50,7 +50,7 @@ export default function VoiceInput({
       </Button>
       
       {/* Status Text */}
-      <div className="text-white text-lg font-semibold mb-4">
+      <div className="text-white text-base sm:text-lg font-semibold mb-4 px-2">
         <span className={isListening ? "animate-pulse" : ""}>
           {getStatusText()}
         </span>

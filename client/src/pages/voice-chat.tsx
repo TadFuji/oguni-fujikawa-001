@@ -114,11 +114,11 @@ export default function VoiceChat() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-green-400">
-      <div className="container mx-auto px-4 py-6 max-w-md">
+      <div className="container mx-auto px-3 py-4 max-w-md">
         
         {/* Header */}
-        <header className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+        <header className="text-center mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 drop-shadow-lg px-2">
             うんこ先生と話そう!
           </h1>
         </header>
@@ -151,11 +151,11 @@ export default function VoiceChat() {
         />
 
         {/* Fun animated dots */}
-        <div className="flex justify-center space-x-4 mb-6">
-          <div className="w-8 h-8 bg-kid-yellow rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-          <div className="w-8 h-8 bg-kid-red rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-          <div className="w-8 h-8 bg-kid-green rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-          <div className="w-8 h-8 bg-kid-blue rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+        <div className="flex justify-center space-x-3 sm:space-x-4 mb-4">
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-kid-yellow rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-kid-red rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-kid-green rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-kid-blue rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
         </div>
 
         {/* Loading Indicator */}
