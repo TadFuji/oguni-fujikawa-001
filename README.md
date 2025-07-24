@@ -39,11 +39,9 @@
 
 ### 必要な環境変数
 ```bash
-DATABASE_URL=postgresql://...
-DIFY_API_KEY=app-...
-DIFY_APP_URL=https://api.dify.ai/v1/chat-messages
-GOOGLE_CLOUD_API_KEY=AIza...
-NODE_ENV=development
+DATABASE_URL=postgresql://...        # PostgreSQL接続URL（必須）
+OPENAI_API_KEY=sk-...                # OpenAI TTS API（必須）
+NODE_ENV=development                 # 開発環境設定
 ```
 
 ### インストール・起動
@@ -84,15 +82,15 @@ npm run start
 
 ### 音声認識システム
 - 継続的音声認識
-- 2秒無音検出で自動送信
+- 1.5秒無音検出で自動送信（高速化）
 - ブラウザ互換性チェック
 - エラーハンドリング
 
 ### 音声合成システム
-- Google Cloud TTS使用時: ja-JP-Neural2-C (男性音声)
-- 最適化パラメータ: 話速1.25倍、ピッチ-2.5st
+- OpenAI TTS API: alloy voice (高品質日本語音声)
+- 最適化パラメータ: 話速1.0倍、自然な発話
 - Web Speech API フォールバック
-- SSML対応による自然な発話
+- iOS Safari音声再生対応済み
 
 ### AIアシスタント統合
 - Dify AIプラットフォーム
@@ -103,10 +101,10 @@ npm run start
 ## 🔧 開発・運用
 
 ### パフォーマンス最適化
-- 本番バンドルサイズ: 317KB (gzipped)
-- デバッグログ99%削減
+- 本番バンドルサイズ: 241KB (gzipped: 77KB)
+- コード最適化: 18個UIコンポーネント + 23個ファイル削除
 - データベースクエリ最適化
-- 静的ファイルキャッシュ
+- 画像最適化: うんこ先生 13KB (97.6%削減)
 
 ### デプロイメント
 - Replit Deployments対応
