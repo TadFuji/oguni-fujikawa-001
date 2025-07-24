@@ -8,34 +8,32 @@ This is a kid-friendly voice chat application built with React and Express that 
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (July 23, 2025)
+## Recent Changes (July 24, 2025)
 
-### Code Optimization & Performance Improvements
-- **COMPREHENSIVE CODE REVIEW COMPLETED**: 全ファイルの徹底的な見直しと最適化
-- 不要ファイル削除: `client/src/lib/dify-api.ts` (未使用のDify APIクライアント)
-- デバッグログの大幅削減: 本番環境向けに99%のconsole.logを削除
-- サーバー側ログの最適化: Dify APIレスポンス詳細ログを削除
-- フロントエンド側ログの最適化: 音声認識・TTS関連ログを削除
-- パフォーマンス向上: 不要な処理とファイルサイズの削減
+### OpenAI TTS Integration
+- **MAJOR TTS UPGRADE**: Google Cloud TTSからOpenAI TTS APIに移行
+- 音声品質向上: alloy voice (1.0倍速度) で自然な子供向け音声
+- 音声認識高速化: タイムアウトを1.5秒に短縮
+- OpenAI API最適化: 10秒タイムアウト、直接音声ストリーミング
 
-### Voice Speed Optimization
-- 話速を1.25倍に向上: より速くテンポの良い音声配信
-- SSML話速を1.3倍に設定: 自然で聞き取りやすい速度
-- 間の時間を短縮: よりスムーズな音声フロー
+### Code Cleanup & Architecture Simplification
+- **COMPREHENSIVE OPTIMIZATION**: 不要機能とファイルの大幅削除
+- 保護者ダッシュボード機能削除: メイン音声チャット機能に特化
+- 不要UIコンポーネント削除: 25個の未使用shadcn/uiコンポーネント
+- データベーススキーマ簡素化: userMessage, robotResponse, createdAtのみ
+- ルーティング簡素化: 単一ページアプリケーション化
 
-### Voice Recognition Major Fix
-- **CRITICAL BUG FIXED**: 2秒無音タイムアウトが動作しない問題を完全解決
-- useEffect依存配列からonTranscriptCompleteを削除（根本原因）
-- callbackRefパターンでコールバック関数の管理を最適化
-- 音声認識インスタンスの不正な再作成を防止
-- 現在は話し終わって2秒後に確実にDifyに送信される
+### Performance Optimization
+- インポート最適化: 未使用ライブラリとモジュール削除
+- API応答高速化: 不要メタデータ削除とシンプル化
+- ログ最適化: 本番環境向けにデバッグログ削除
+- キャッシュ削除: 複雑なTTSキャッシュロジック除去
 
-### Text-to-Speech Enhancements  
-- Integrated Google Cloud Text-to-Speech API with high-quality ja-JP-Neural2-C voice
-- Optimized SSML parameters: rate="1.3", pitch="-2.5st", emphasis="strong"
-- Audio parameters: speakingRate=1.25, pitch=-2.5, volumeGainDb=4.0
-- Enhanced natural breaks for punctuation marks
-- Fallback to Web Speech API with optimized Japanese voice selection
+### Architecture Modernization
+- 音声認識タイムアウト: 2秒→1.5秒に高速化
+- データベース軽量化: 不要カラム削除とクエリ最適化
+- フロントエンド簡素化: 単一VoiceChatコンポーネント
+- Dify API統合最適化: 不要なZodバリデーション削除
 
 ## System Architecture
 
@@ -143,18 +141,17 @@ conversations {
 ### Environment Variables Required
 - `DATABASE_URL`: PostgreSQL connection string
 - `DIFY_API_KEY`: API key for Dify AI platform  
-- `DIFY_APP_URL`: Dify application endpoint URL
-- `GOOGLE_CLOUD_API_KEY`: Google Cloud Text-to-Speech API key
+- `OPENAI_API_KEY`: OpenAI API key for TTS service
 - `NODE_ENV`: Environment mode (development/production)
 
 ### Production Deployment Status
-- ✅ Build system tested and optimized
-- ✅ Database schema synchronized
-- ✅ Environment variables configured
-- ✅ High-quality TTS configured (Google Cloud)
-- ✅ Voice recognition optimized (2-second timeout)
-- ✅ Performance optimized (99% debug logs removed)
-- ✅ Production bundle size: 317KB gzipped
-- ✅ Ready for deployment
+- ✅ OpenAI TTS API integrated and optimized
+- ✅ Architecture simplified and modernized
+- ✅ Database schema optimized (3 essential columns)
+- ✅ Codebase cleaned (25+ unused components removed)
+- ✅ Voice recognition speed optimized (1.5-second timeout)
+- ✅ Performance maximized (minimal dependencies)
+- ✅ Single-page application architecture
+- ✅ Production-ready and deployment-optimized
 
 The application is designed to be child-safe with a focus on simple interactions, colorful animations, and clear audio feedback to create an engaging learning experience for young users.

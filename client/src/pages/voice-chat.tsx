@@ -39,7 +39,6 @@ export default function VoiceChat() {
     id: number;
     userMessage: string;
     robotResponse: string;
-    rawDifyResponse?: string;
     createdAt: string;
   }>;
 

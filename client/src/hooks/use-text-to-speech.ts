@@ -9,13 +9,10 @@ export function useTextToSpeech() {
   const speak = useCallback(async (text: string) => {
     if (!isSupported) {
       setError('Text-to-speech is not supported in this browser');
-      console.error('TTS not supported');
       return;
     }
 
     if (!text.trim()) return;
-
-    // Processing high-quality TTS
 
     // Stop any ongoing speech
     window.speechSynthesis.cancel();
