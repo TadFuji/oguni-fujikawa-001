@@ -34,26 +34,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "テキストが必要です" });
       }
 
-      // Processing TTS request with OpenAI - optimized for speed
-
       if (!process.env.OPENAI_API_KEY) {
         return res.status(404).json({ message: "OpenAI TTS利用不可、Web Speech APIを使用" });
       }
 
-      // Simple text processing for speed
       const optimizedText = text.trim();
 
-      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      // Generate speech using OpenAI TTS - optimized for speed
+      // Generate speech using OpenAI TTS
       const mp3 = await openai.audio.speech.create({
-        model: "tts-1", // Standard model for faster generation (vs tts-1-hd)
-        voice: "alloy", // Balanced, neutral voice suitable for children
+        model: "tts-1",
+        voice: "alloy",
         input: optimizedText,
-        speed: 1.0, // Normal speaking rate for clearer delivery
+        speed: 1.0,
         response_format: "mp3"
       });
 
-      // Direct response for maximum speed
       const audioBuffer = Buffer.from(await mp3.arrayBuffer());
       
       res.set({
@@ -78,36 +73,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "メッセージが必要です" });
       }
 
-      // Get Dify API credentials from environment
-      const difyApiKey = process.env.DIFY_API_KEY || process.env.VITE_DIFY_API_KEY;
-      
-      if (!difyApiKey) {
-        return res.status(500).json({ 
-          message: "Dify APIキーが設定されていません。" 
-        });
-      }
-
-      // Use fixed Dify API endpoint
+      // Dify API configuration (optimized)
       const difyApiUrl = "https://api.dify.ai/v1/chat-messages";
-
-      // Prepare Dify API request with consistent user ID
+      const difyApiKey = "app-oHgFPuW6h2qOSx49HPjEfbMS";
+      
       const difyRequest = {
         inputs: {},
         query: userMessage,
         response_mode: "blocking" as const,
-        user: "kid-user-consistent", // Use consistent user ID for better context
+        user: "kid-user-consistent",
       };
 
-
-
-      // Use correct API key for Dify
-      const correctApiKey = "app-oHgFPuW6h2qOSx49HPjEfbMS";
-
-      // Call Dify API with simpler, faster configuration
+      // Call Dify API
       const difyResponse = await fetch(difyApiUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${correctApiKey}`,
+          'Authorization': `Bearer ${difyApiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(difyRequest),
@@ -121,14 +102,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let robotResponse = difyData.answer || "【重要】Difyから返答がありませんでした。設定を確認してください。";
       
-      // Simple text cleanup for faster processing
+      // Text cleanup
       robotResponse = robotResponse
-        .replace(/^Dify からの解答です\n=========\n/, '')
-        .replace(/^Dify からの解答です\n/, '')
+        .replace(/^Dify からの解答です\n(=========\n)?/, '')
         .replace(/^=========\n/, '')
         .trim();
-
-
 
       // Save conversation to storage
       const conversation = await storage.createConversation({

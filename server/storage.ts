@@ -1,12 +1,10 @@
 import { conversations, type Conversation, type InsertConversation } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 
 export interface IStorage {
   getConversations(): Promise<Conversation[]>;
   createConversation(conversation: InsertConversation): Promise<Conversation>;
-  getConversation(id: number): Promise<Conversation | undefined>;
-
 }
 
 export class DatabaseStorage implements IStorage {
@@ -22,12 +20,6 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return conversation;
   }
-
-  async getConversation(id: number): Promise<Conversation | undefined> {
-    const [conversation] = await db.select().from(conversations).where(eq(conversations.id, id));
-    return conversation;
-  }
-
 
 }
 

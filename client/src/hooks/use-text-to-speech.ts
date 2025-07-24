@@ -35,10 +35,8 @@ export function useTextToSpeech() {
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         
-        // iOS-specific audio optimizations
         if (isIOS) {
-          audio.preload = 'metadata'; // Lighter preload for iOS
-          // Set playsInline for iOS (TypeScript workaround)
+          audio.preload = 'metadata';
           (audio as any).playsInline = true;
         } else {
           audio.preload = 'auto';
@@ -60,8 +58,6 @@ export function useTextToSpeech() {
           fallbackToWebSpeechAPI(text);
         };
 
-        // iOS Safari requires user interaction for audio playback
-        // Create a promise that handles both success and failure cases
         const playAudio = () => {
           return new Promise<void>((resolve, reject) => {
             audio.addEventListener('canplaythrough', () => {
@@ -74,7 +70,6 @@ export function useTextToSpeech() {
               reject(err);
             }, { once: true });
             
-            // Force load the audio
             audio.load();
           });
         };
@@ -99,19 +94,15 @@ export function useTextToSpeech() {
   }, [isSupported]);
 
   const fallbackToWebSpeechAPI = (text: string) => {
-    
     const speakWithVoices = () => {
       const utterance = new SpeechSynthesisUtterance(text);
       
-      // Enhanced configuration for better Japanese speech on iOS
       utterance.lang = 'ja-JP';
-      utterance.rate = 0.9; // Slower rate for iOS Safari compatibility
-      utterance.pitch = 1.0; // Normal pitch for iOS compatibility
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
       utterance.volume = 1;
 
-      // Select Japanese voice with iOS optimization
       const voices = window.speechSynthesis.getVoices();
-      // On iOS, prefer system Japanese voices
       const japaneseVoice = voices.find(voice => {
         const lang = voice.lang.toLowerCase();
         return lang.startsWith('ja') && voice.localService;
