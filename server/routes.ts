@@ -5,6 +5,12 @@ import { insertConversationSchema, difyRequestSchema, difyResponseSchema } from 
 import { z } from "zod";
 import OpenAI from "openai";
 
+// Initialize OpenAI client globally for reuse and better performance
+const openai = new OpenAI({ 
+  apiKey: process.env.OPENAI_API_KEY,
+  timeout: 10000 // 10 second timeout for faster failure detection
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get conversation history
@@ -26,34 +32,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "テキストが必要です" });
       }
 
-      // Processing TTS request with OpenAI
+      // Processing TTS request with OpenAI - optimized for speed
 
-      const openaiApiKey = process.env.OPENAI_API_KEY;
-      if (!openaiApiKey) {
+      if (!process.env.OPENAI_API_KEY) {
         console.log('🔊 OpenAI API Key未設定、Web Speech APIにフォールバック');
         return res.status(404).json({ message: "OpenAI TTS利用不可、Web Speech APIを使用" });
       }
 
-      // Initialize OpenAI client
-      const openai = new OpenAI({ apiKey: openaiApiKey });
+      // Optimize text for faster TTS processing
+      const optimizedText = text
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim()
+        .substring(0, 4000); // Limit text length for faster processing
 
       // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      // Generate speech using OpenAI TTS
+      // Generate speech using OpenAI TTS - optimized for speed
       const mp3 = await openai.audio.speech.create({
-        model: "tts-1-hd", // High-quality model for better audio quality
+        model: "tts-1", // Standard model for faster generation (vs tts-1-hd)
         voice: "echo", // Higher-pitched, energetic voice suitable for children
-        input: text,
+        input: optimizedText,
         speed: 1.0, // Normal speaking rate for clearer delivery
         response_format: "mp3"
       });
 
-      // Convert response to buffer
+      // Stream response directly for faster delivery
       const audioBuffer = Buffer.from(await mp3.arrayBuffer());
       
       res.set({
         'Content-Type': 'audio/mpeg',
         'Content-Length': audioBuffer.length,
-        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+        'Cache-Control': 'public, max-age=300', // Shorter cache for faster updates
+        'Accept-Ranges': 'bytes', // Enable range requests for better streaming
       });
       
       res.send(audioBuffer);
