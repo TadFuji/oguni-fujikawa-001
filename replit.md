@@ -10,7 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 24, 2025)
 
-### Character & Branding Update (Latest)
+### iOS Audio Compatibility Fix (Latest)
+- **iOS AUDIO OPTIMIZATION**: iPhone音声再生問題の修正
+- iOS Safari対応: 自動再生制限への対応強化
+- フォールバック改善: Web Speech API最適化
+- オーディオ設定: iOS専用プリロード設定
+- デバッグ強化: 音声エラーログ詳細化
+
+### Character & Branding Update
 - **CHARACTER REDESIGN**: うんこ先生キャラクター導入
 - タイトル変更: "うんこ先生と話そう!" に更新
 - キャラクター画像: 専用うんこ先生イメージに置換（554KB→13KB最適化）

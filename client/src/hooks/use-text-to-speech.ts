@@ -5,6 +5,9 @@ export function useTextToSpeech() {
   const [error, setError] = useState<string | null>(null);
 
   const isSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  
+  // iOS detection for audio optimization
+  const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   const speak = useCallback(async (text: string) => {
     if (!isSupported) {
@@ -32,10 +35,16 @@ export function useTextToSpeech() {
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         
-        // Optimize audio playback for mobile and speed
-        audio.preload = 'auto';
-        audio.volume = 0.9; // Slightly lower volume for comfort
-        audio.playbackRate = 1.0; // Ensure consistent playback speed
+        // iOS-specific audio optimizations
+        if (isIOS) {
+          audio.preload = 'metadata'; // Lighter preload for iOS
+          // Set playsInline for iOS (TypeScript workaround)
+          (audio as any).playsInline = true;
+        } else {
+          audio.preload = 'auto';
+        }
+        audio.volume = 0.9;
+        audio.playbackRate = 1.0;
         
         setIsSpeaking(true);
         setError(null);
@@ -51,10 +60,30 @@ export function useTextToSpeech() {
           fallbackToWebSpeechAPI(text);
         };
 
+        // iOS Safari requires user interaction for audio playback
+        // Create a promise that handles both success and failure cases
+        const playAudio = () => {
+          return new Promise<void>((resolve, reject) => {
+            audio.addEventListener('canplaythrough', () => {
+              audio.play()
+                .then(() => resolve())
+                .catch((err) => reject(err));
+            }, { once: true });
+            
+            audio.addEventListener('error', (err) => {
+              reject(err);
+            }, { once: true });
+            
+            // Force load the audio
+            audio.load();
+          });
+        };
+
         try {
-          await audio.play();
+          await playAudio();
           return;
         } catch (playError) {
+          console.log('OpenAI TTS playback failed, falling back to Web Speech API:', playError);
           setIsSpeaking(false);
           URL.revokeObjectURL(audioUrl);
           fallbackToWebSpeechAPI(text);
@@ -74,20 +103,18 @@ export function useTextToSpeech() {
     const speakWithVoices = () => {
       const utterance = new SpeechSynthesisUtterance(text);
       
-      // Enhanced configuration for better Japanese speech
+      // Enhanced configuration for better Japanese speech on iOS
       utterance.lang = 'ja-JP';
-      utterance.rate = 1.05; // Slightly faster for energy
-      utterance.pitch = 0.7; // Lower pitch for male voice
+      utterance.rate = 0.9; // Slower rate for iOS Safari compatibility
+      utterance.pitch = 1.0; // Normal pitch for iOS compatibility
       utterance.volume = 1;
 
-      // Select Japanese voice
+      // Select Japanese voice with iOS optimization
       const voices = window.speechSynthesis.getVoices();
+      // On iOS, prefer system Japanese voices
       const japaneseVoice = voices.find(voice => {
         const lang = voice.lang.toLowerCase();
-        const name = voice.name.toLowerCase();
-        return (lang.includes('ja') || lang.includes('jp')) && 
-               (name.includes('ichiro') || name.includes('takeshi') || 
-                name.includes('male') || name.includes('男'));
+        return lang.startsWith('ja') && voice.localService;
       }) || voices.find(voice => {
         const lang = voice.lang.toLowerCase();
         return lang.includes('ja') || lang.includes('jp');
